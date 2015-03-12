@@ -1,0 +1,6 @@
+out/
+tmp/
+.idea/
+*.iml
+.bundle/
+participants.yml
