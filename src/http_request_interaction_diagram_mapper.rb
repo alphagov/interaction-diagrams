@@ -1,12 +1,13 @@
 class HttpRequestInteractionDiagramMapper
-  def initialize(formatter, write_request_body)
+  def initialize(formatter, write_request_body, display_cookies)
     @formatter = formatter
     @write_request_body = write_request_body
+    @display_cookies = display_cookies
   end
 
   def note_from(http_request)
     body_lines = []
-    body_lines << "Cookie: #{http_request.cookie_header}" if http_request.cookie_header
+    body_lines << "Cookie: #{http_request.cookie_header}" if http_request.cookie_header && @display_cookies
 
     if @write_request_body && http_request.body
 

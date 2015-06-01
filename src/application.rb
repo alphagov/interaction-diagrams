@@ -24,18 +24,19 @@ class Application
     application = Application.new(
         HtmlInteractionDiagramCanvas.new(file_name),
         ordered_participants,
-        http_message_listener, ports_to_monitor, options[:display_request_bodies], options[:display_response_bodies])
+        http_message_listener, ports_to_monitor, options[:display_request_bodies], options[:display_response_bodies], options[:display_cookies])
 
     application.run
   end
 
-  def initialize(interaction_diagram_canvas, ordered_participants, http_message_listener, ports_to_monitor, display_request_bodies, display_response_bodies)
+  def initialize(interaction_diagram_canvas, ordered_participants, http_message_listener, ports_to_monitor, display_request_bodies, display_response_bodies, display_cookies)
     @interaction_diagram_canvas = interaction_diagram_canvas
     @ordered_participants = ordered_participants
     @http_message_listener = http_message_listener
     @ports_to_monitor = ports_to_monitor
     @display_request_bodies = display_request_bodies
     @display_response_bodies = display_response_bodies
+    @display_cookies = display_cookies
   end
 
   def run
@@ -44,8 +45,8 @@ class Application
 
     http_message_writer = InteractionDiagramHttpMessageWriter.new(
         interaction_diagram,
-        HttpRequestInteractionDiagramMapper.new(formatter, @display_request_bodies),
-        HttpResponseInteractionDiagramMapper.new(formatter, @display_response_bodies)
+        HttpRequestInteractionDiagramMapper.new(formatter, @display_request_bodies, @display_cookies),
+        HttpResponseInteractionDiagramMapper.new(formatter, @display_response_bodies, @display_cookies)
     )
 
     @http_message_listener.get_http_messages.
