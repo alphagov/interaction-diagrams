@@ -10,9 +10,10 @@ class SystemCommandExecutor
     end
 
   def self.invoke(command)
-    rd, wr = IO.pipe
-    Kernel.spawn(command, :out => wr)
-    wr.close
-    rd.read
+    IO.popen(command) do |out|
+      out.each do |line|
+        yield line
+      end
+    end
   end
 end

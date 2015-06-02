@@ -26,7 +26,7 @@ class HttpResponseInteractionDiagramMapper
   end
 
   def message_from(http_response)
-    http_response.response_code
+    http_response.response_code || ""
   end
 
 end
