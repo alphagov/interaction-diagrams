@@ -15,7 +15,7 @@ class Application
     file_manager = FileManager.new(options)
 
     participants = options[:participants]
-    ordered_participants = participants.map { |participant| participant[:name] }
+    participant_order = participants.map { |p| p[:name] }
 
     ports_to_monitor = participants.
         select { |participant| participant[:port] && (options[:participants_to_monitor].empty? || options[:participants_to_monitor].include?(participant[:name])) }.
@@ -24,23 +24,22 @@ class Application
     http_message_listener = TcpdumpHttpMessageListener.new(participants, ports_to_monitor, !options[:skip_capture], options[:verbose], file_manager)
 
     application = Application.new(file_manager,
-        ordered_participants,
-        http_message_listener, ports_to_monitor, options[:display_request_bodies], options[:display_response_bodies], options[:display_cookies])
+        http_message_listener, ports_to_monitor, participant_order, options[:display_request_bodies], options[:display_response_bodies], options[:display_cookies])
 
     application.run
   end
 
-  def initialize(file_manager, ordered_participants, http_message_listener, ports_to_monitor, display_request_bodies, display_response_bodies, display_cookies)
+  def initialize(file_manager, http_message_listener, ports_to_monitor, participant_order, display_request_bodies, display_response_bodies, display_cookies)
     @file_manager = file_manager
-    @ordered_participants = ordered_participants
     @display_request_bodies = display_request_bodies
     @display_response_bodies = display_response_bodies
     @display_cookies = display_cookies
     @http_message_listener = http_message_listener
+    @participant_order = participant_order
   end
 
   def run
-    diagram_writer = DiagramPerTestWriter.new(@file_manager, @ordered_participants, @display_request_bodies, @display_response_bodies, @file_manager.session_name)
+    diagram_writer = DiagramPerTestWriter.new(@file_manager, @display_request_bodies, @display_response_bodies, @file_manager.session_name, @participant_order)
     @http_message_listener.process_http_messages(SkipUnwantedMessages.new(diagram_writer))
   end
 

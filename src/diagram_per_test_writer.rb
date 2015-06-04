@@ -2,9 +2,8 @@ require 'erb'
 
 class DiagramPerTestWriter
 
-  def initialize(file_manager, ordered_participants, display_request_bodies, display_response_bodies, title)
+  def initialize(file_manager, display_request_bodies, display_response_bodies, title, participant_order)
     @file_manager = file_manager
-    @ordered_participants = ordered_participants
     @display_request_bodies = display_request_bodies
     @display_response_bodies = display_response_bodies
     formatter = InteractionDiagramFormatter.new
@@ -12,6 +11,7 @@ class DiagramPerTestWriter
     @http_response_mapper = HttpResponseInteractionDiagramMapper.new(formatter, @display_response_bodies, @display_cookies)
     @title = title
     @tests = []
+    @participant_order = participant_order
   end
 
   def write_index
@@ -25,7 +25,7 @@ class DiagramPerTestWriter
     @tests << event
     file = @file_manager.new_output_file(event.testName, ".html")
     @interaction_diagram_canvas = HtmlInteractionDiagramCanvas.new(file)
-    @interaction_diagram = InteractionDiagram.new(@ordered_participants)
+    @interaction_diagram = InteractionDiagram.new(@participant_order)
   end
 
   def visit_HttpRequest(http_request)

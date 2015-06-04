@@ -1,3 +1,4 @@
+
 class InteractionDiagram
   REQUEST_ARROW = '->'
   RESPONSE_ARROW = '-->'
@@ -5,9 +6,10 @@ class InteractionDiagram
   SOURCE_ON_LEFT_NOTE_ORIENTATION = 'right'
   BREAK_LINES_PATTERN = /[^\n].{0,100}/
 
-  def initialize(ordered_participants)
-    @ordered_participants = ordered_participants
-    @lines = @ordered_participants.map { |participant| "participant #{participant}" }
+  def initialize(participant_order)
+    @participant_order = participant_order
+    @participants = []
+    @lines = []
   end
 
   def write_message(source_name, destination_name, message, isResponse)
@@ -21,18 +23,20 @@ class InteractionDiagram
   end
 
   def to_s
-    @lines.join("\n")
+    @participants.map { |p| "participant " + p}.join("\n") + "\n" +
+     @lines.join("\n")
   end
 
   private
 
   def add_participants(source_name, destination_name)
-    @ordered_participants << source_name unless @ordered_participants.include? source_name
-    @ordered_participants << destination_name unless @ordered_participants.include? destination_name
+    @participants << source_name if !@participants.include?(source_name)
+    @participants << destination_name if !@participants.include?(source_name)
+    @participants.sort_by! {|p| @participant_order.find_index(p) || participant_order.size + p.hash} # Fall back on the hash as an arbitrary stable order.
   end
 
   def participants_displayed_from_left_to_right(first_participant, second_participant)
-    @ordered_participants.find_index(first_participant) < @ordered_participants.find_index(second_participant)
+    @participant_order.find_index(first_participant) < @participant_order.find_index(second_participant)
   end
 
   def break_into_lines(value)
