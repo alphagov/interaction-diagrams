@@ -19,10 +19,10 @@ class HtmlInteractionDiagramCanvas
 <html>
 <head>
     <title>Interaction Diagram</title>
-    <script src="../lib/raphael-min.js"></script>
-    <script src="../lib/underscore-min.js"></script>
-    <script src="../lib/jquery.min.js"></script>
-    <script src="../lib/sequence-diagram-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
 </head>
 <body>
 <div class="diagram">
