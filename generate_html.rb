@@ -12,7 +12,6 @@ configuration = {
     :display_request_bodies => true,
     :display_response_bodies => true,
     :display_cookies => true
-    :skip_capture => false
 }
 
 OptionParser.new do |o|
@@ -41,11 +40,6 @@ OptionParser.new do |o|
   participants = configuration[:participants].map { |participant| participant[:name] }
   o.on('-p PARTICIPANT', participants, 'Participant to capture (defaults to all)') do |participant|
     configuration[:participants_to_monitor] << participant
-  end
-
-  o.on('--skip_capture', 'Do not capture network traffic, re-use the results of a previous capture instead') do
-    configuration[:skip_capture] = true
-
   end
 
   o.separator ''

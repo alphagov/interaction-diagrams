@@ -19,7 +19,7 @@ class Application
         select { |participant| participant[:port] && (options[:participants_to_monitor].empty? || options[:participants_to_monitor].include?(participant[:name])) }.
         map { |participant| participant[:port] }
 
-    http_message_listener = TcpdumpHttpMessageListener.new(participants, ports_to_monitor, !options[:skip_capture])
+    http_message_listener = TcpdumpHttpMessageListener.new(participants, ports_to_monitor)
 
     application = Application.new(
         HtmlInteractionDiagramCanvas.new(file_name),
