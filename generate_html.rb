@@ -10,7 +10,8 @@ configuration = {
     :participants_to_monitor => [],
     :output_directory => './out',
     :display_request_bodies => true,
-    :display_response_bodies => true
+    :display_response_bodies => true,
+    :display_cookies => true
 }
 
 OptionParser.new do |o|
@@ -30,6 +31,10 @@ OptionParser.new do |o|
 
   o.on('--hide_response_body', "Don't display response bodies") do
     configuration[:display_response_bodies] = false
+  end
+
+  o.on('--hide_cookies', "Don't display cookie information") do
+    configuration[:display_cookies] = false
   end
 
   participants = configuration[:participants].map { |participant| participant[:name] }

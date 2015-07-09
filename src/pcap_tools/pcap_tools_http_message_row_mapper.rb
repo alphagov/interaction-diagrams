@@ -56,5 +56,4 @@ class PcapToolsHttpMessageRowMapper
       @components_by_port[source_port] = participants_by_user_agent[user_agent_from(event)] unless @components_by_port.has_key? source_port
     end
   end
-
 end

@@ -1,14 +1,15 @@
 class HttpResponseInteractionDiagramMapper
 
-  def initialize(formatter, write_response_body)
+  def initialize(formatter, write_response_body, display_cookies)
     @formatter = formatter
     @write_response_body = write_response_body
+    @display_cookies = display_cookies
   end
 
   def note_from(http_response)
     body_lines = []
     body_lines << "Location: #{http_response.location_header}" if http_response.location_header
-    body_lines << "Set-Cookie: #{http_response.set_cookie_header}" if http_response.set_cookie_header
+    body_lines << "Set-Cookie: #{http_response.set_cookie_header}" if http_response.set_cookie_header && @display_cookies
 
     if @write_response_body && http_response.body
 
