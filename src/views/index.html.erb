@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><% @title %></title>
+</head>
+<body>
+  <h1><%= @title %> interaction diagrams</h1>
+  <!-- <p>Captured on capture_time </p> -->
+
+  <ul>
+    <% tests.each do |testClass, testNames|  %>
+    <li><%= testClass %>
+      <ul>
+        <% testNames.each do |testName| %>
+        <li><a href="<%= @title + '/' + testName.testName + '.html' %>"><%= testName.testName %></a></li>
+        <% end %>
+      </ul>
+    </li>
+    <% end %>
+  </ul>
+
+</body>
+</html>

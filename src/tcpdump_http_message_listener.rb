@@ -8,36 +8,34 @@ require 'active_support'
 require 'active_support/core_ext'
 
 class TcpdumpHttpMessageListener
-  WORKING_DIRECTORY = './tmp/'
 
-  def initialize(participants, ports_to_monitor, capture_traffic)
+  def initialize(participants, ports_to_monitor, capture_traffic, verbose, file_manager)
     @participants = participants
     @tcpdump_network_traffic_writer = InteractiveTcpdumpNetworkTrafficWriter.new(ports_to_monitor)
     @capture_traffic = capture_traffic
+    @file_manager = file_manager
   end
 
-  def get_http_messages
-    tcpdump_output_file_path = "#{WORKING_DIRECTORY}/output.pcap"
+  def process_http_messages(message_processor)
+
     if (@capture_traffic)
-      FileUtils.rm_rf WORKING_DIRECTORY, secure:true
-      FileUtils.mkdir_p WORKING_DIRECTORY
-      @tcpdump_network_traffic_writer.write_network_traffic_to(tcpdump_output_file_path)
+      @file_manager.clear_pcap_output_file
+      @tcpdump_network_traffic_writer.write_network_traffic_to(@file_manager.pcap_output_file)
     end
 
     all_user_agents = Set.new()
 
     mapper = PcapToolsHttpMessageRowMapper.new(@participants)
-    results = []
 
-    TsharkPcapParser.run(tcpdump_output_file_path) do |event|
-      puts event
+    TsharkPcapParser.run(@file_manager.pcap_output_file) do |event|
+      puts event if @verbose
       all_user_agents << event[:user_agent] if event[:user_agent].present?
-      results << mapper.map_from(event)
+      mapper.map_from(event).accept(message_processor)
     end
 
-    puts "All user agents: #{all_user_agents.to_a}"
-    puts "User agent mappings: #{mapper.participants_by_port}"
-    results
+    message_processor.write_index
+
+    puts "Unrecognised ports: #{mapper.participants_by_port.reject {|k, v| v.present? }}" if @verbose
   end
 
 end

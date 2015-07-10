@@ -1,9 +1,11 @@
 #! /usr/bin/env ruby
 
+$LOAD_PATH << "./src"
+
 require 'optparse'
 require 'fileutils'
 require 'yaml'
-require_relative './src/application'
+require 'application'
 
 configuration = {
     :participants => YAML.load_file('participants.yml').map { |participant| Hash[participant.map { |k,v| [k.to_sym,v] }] },
@@ -60,9 +62,6 @@ OptionParser.new do |o|
 
 end::parse!
 
-puts "Monitoring #{(configuration[:participants_to_monitor].empty? ? 'all participants' : configuration[:participants_to_monitor].join(', '))}"
+puts "Monitoring #{(configuration[:participants_to_monitor].empty? ? 'all participants' : configuration[:participants_to_monitor].join(', '))}" if configuration[:verbose]
 
-FileUtils.mkdir_p configuration[:output_directory]
-file_name = File.join(configuration[:output_directory], "#{configuration[:development_mode] ? 'dev' : Time.now.to_i.to_s}.html")
-
-Application.generate_html_file(file_name, configuration)
+Application.generate_diagrams(configuration)
