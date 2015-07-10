@@ -1,32 +1,43 @@
-require 'pcap_tools'
+require 'set'
 require_relative 'util/system_command_executor'
+require_relative 'pcap_tools/tshark_pcap_parser'
+require_relative 'pcap_tools/pcap_tools_http_message_row_mapper'
 require_relative 'interactive_tcpdump_network_traffic_writer'
-require_relative 'pcap_tools/pcap_tools_http_message_parser'
-require_relative 'pcap_tools/pcap_tools_http_message_row_mapper_factory'
+
+require 'active_support'
+require 'active_support/core_ext'
 
 class TcpdumpHttpMessageListener
   WORKING_DIRECTORY = './tmp/'
 
   def initialize(participants, ports_to_monitor, capture_traffic)
-    @http_message_mapper_factory = PcapToolsHttpMessageRowMapperFactory.new(participants)
+    @participants = participants
     @tcpdump_network_traffic_writer = InteractiveTcpdumpNetworkTrafficWriter.new(ports_to_monitor)
-    @pcap_tools_http_message_parser = PcapToolsHttpMessageParser.new
     @capture_traffic = capture_traffic
   end
 
   def get_http_messages
-
+    tcpdump_output_file_path = "#{WORKING_DIRECTORY}/output.pcap"
     if (@capture_traffic)
       FileUtils.rm_rf WORKING_DIRECTORY, secure:true
       FileUtils.mkdir_p WORKING_DIRECTORY
-      tcpdump_output_file_path = "#{WORKING_DIRECTORY}/output.pcap"
       @tcpdump_network_traffic_writer.write_network_traffic_to(tcpdump_output_file_path)
     end
 
-    chronological_http_messages = @pcap_tools_http_message_parser.parse_file(tcpdump_output_file_path)
+    all_user_agents = Set.new()
 
-    http_message_mapper = @http_message_mapper_factory.create_for(chronological_http_messages)
-    chronological_http_messages.map { |event| http_message_mapper.map_from(event) }
+    mapper = PcapToolsHttpMessageRowMapper.new(@participants)
+    results = []
+
+    TsharkPcapParser.run(tcpdump_output_file_path) do |event|
+      puts event
+      all_user_agents << event[:user_agent] if event[:user_agent].present?
+      results << mapper.map_from(event)
+    end
+
+    puts "All user agents: #{all_user_agents.to_a}"
+    puts "User agent mappings: #{mapper.participants_by_port}"
+    results
   end
 
 end

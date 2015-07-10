@@ -11,8 +11,9 @@ configuration = {
     :output_directory => './out',
     :display_request_bodies => true,
     :display_response_bodies => true,
-    :display_cookies => true
-    :skip_capture => false
+    :display_cookies => true,
+    :skip_capture => false,
+    :verbose => false
 }
 
 OptionParser.new do |o|
@@ -45,7 +46,10 @@ OptionParser.new do |o|
 
   o.on('--skip_capture', 'Do not capture network traffic, re-use the results of a previous capture instead') do
     configuration[:skip_capture] = true
+  end
 
+  o.on('-v', 'verbose') do
+    configuration[:verbose] = true
   end
 
   o.separator ''
