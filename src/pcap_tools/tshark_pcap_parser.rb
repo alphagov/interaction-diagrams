@@ -3,8 +3,9 @@ class TsharkPcapParser
 
   @@TSHARK_FIELDS = ["frame.time_epoch", "frame.comment", "tcp.srcport", "tcp.dstport", "http.request.method", "http.request.uri", "http.response.code", "http.response.phrase", "http.user_agent", "http.cookie", "http.set_cookie", "http.location","http.request", "http.response", "http.content_type", "extractor.value.hex", "data"]
 
-  def self.run(file)
+  def self.run(file, verbose)
     tshark_command = "tshark -r #{file} -E separator='~' -T fields -X lua_script:./src/extract_bodies.lua -X lua_script1:data-text-lines -X lua_script1:json -X lua_script1:urlencoded-form -e " + @@TSHARK_FIELDS.join(" -e ")
+    puts "Running: " + tshark_command if verbose
     SystemCommandExecutor.invoke(tshark_command) do |line|
       fields = line.split("~")
 

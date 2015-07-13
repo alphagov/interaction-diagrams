@@ -1,34 +1,17 @@
-require 'erb'
 
-class DiagramPerTestWriter
-
-  def initialize(file_manager, display_request_bodies, display_response_bodies, title, participant_order)
-    @file_manager = file_manager
+class SingleDiagramWriter
+  def initialize(output_file, display_request_bodies, display_response_bodies, participant_order)
     @display_request_bodies = display_request_bodies
     @display_response_bodies = display_response_bodies
     formatter = InteractionDiagramFormatter.new
     @http_request_mapper = HttpRequestInteractionDiagramMapper.new(formatter, @display_request_bodies, @display_cookies)
     @http_response_mapper = HttpResponseInteractionDiagramMapper.new(formatter, @display_response_bodies, @display_cookies)
-    @title = title
-    @tests = []
     @participant_order = participant_order
-  end
-
-  def finished
-    tests = @tests.group_by { |test| test.testClassName }
-    index_renderer = ERB.new(File.read('src/views/index.html.erb'))
-    index = index_renderer.result(binding)
-    File.write(@file_manager.index_file, index)
-  end
-
-  def visit_StartTest(event)
-    @tests << event
     @interaction_diagram = InteractionDiagram.new(@participant_order)
+    @output_file = output_file
   end
 
   def visit_HttpRequest(http_request)
-    return if @interaction_diagram.nil?
-
     source_name = http_request.source_name
     destination_name = http_request.destination_name
 
@@ -38,10 +21,7 @@ class DiagramPerTestWriter
     @interaction_diagram.write_note(source_name, destination_name, note) if note.length > 0
   end
 
-
   def visit_HttpResponse(http_response)
-    return if @interaction_diagram.nil?
-
     source_name = http_response.source_name
     destination_name = http_response.destination_name
 
@@ -51,11 +31,8 @@ class DiagramPerTestWriter
     @interaction_diagram.write_note(source_name, destination_name, note) if note.length > 0
   end
 
-
-  def visit_FinishTest(event)
-    file = @file_manager.new_output_file(event.testName, ".html")
-    interaction_diagram_canvas = HtmlInteractionDiagramCanvas.new(file)
+  def finished
+    interaction_diagram_canvas = HtmlInteractionDiagramCanvas.new(@output_file)
     interaction_diagram_canvas.paint(@interaction_diagram)
-    @interaction_diagram = nil
   end
 end

@@ -7,15 +7,22 @@ require 'fileutils'
 require 'yaml'
 require 'application'
 
+def load_participants
+  YAML.load_file('participants.yml').map { |participant| Hash[participant.map { |k,v| [k.to_sym,v] }] }
+rescue
+  []
+end
+
 configuration = {
-    :participants => YAML.load_file('participants.yml').map { |participant| Hash[participant.map { |k,v| [k.to_sym,v] }] },
+    :participants => load_participants()  ,
     :participants_to_monitor => [],
     :output_directory => './out',
     :display_request_bodies => true,
     :display_response_bodies => true,
     :display_cookies => true,
     :skip_capture => false,
-    :verbose => false
+    :verbose => false,
+    :end_to_end_tests => false
 }
 
 OptionParser.new do |o|
@@ -54,9 +61,14 @@ OptionParser.new do |o|
     configuration[:verbose] = true
   end
 
+  o.on('--tests', 'Only capture traffic between UDP test start and stop markers.') do
+    configuration[:end_to_end_tests] = true
+  end
+
   o.separator ''
   o.separator "#{o.summary_indent}Available Participants"
   o.separator "#{o.summary_indent}----------------------"
+  o.separator "#{o.summary_indent} Please consult README.md to see how to create a participants.yml file." if participants.empty?
   configuration[:participants].each { |participant| o.separator("#{o.summary_indent}#{participant[:name]}") }
   o.separator ''
 

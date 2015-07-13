@@ -6,7 +6,7 @@ class FileManager
     @index_file = File.join(options[:output_directory], "#{session_name}.html")
     @session_dir = File.join(options[:output_directory], session_name)
     @index = 0
-    FileUtils.mkdir_p @session_dir
+    FileUtils.mkdir_p @session_dir if options[:end_to_end_tests]
   end
 
   attr_reader :index_file, :session_name
@@ -21,7 +21,7 @@ class FileManager
   end
 
   def clear_pcap_output_file
-    FileUtils.rm pcap_output_file
+    FileUtils.rm pcap_output_file if File.exists?(pcap_output_file)
   end
 
   def pcap_output_file
