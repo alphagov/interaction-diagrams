@@ -20,6 +20,16 @@ You should also ensure you have all required gem dependencies after a pull. From
 
 This has been tested with versions 1.12.5 and 1.99.6 of wireshark on OS X.
 
+### Configuring loopback device
+
+You need to ensure you have permission to capture on the loopback device.  If you don't then you will see output from `./generate_html.rb` like this:
+
+```sh
+Recording network traffic. Press ENTER to stop...
+tcpdump: lo0: You don't have permission to capture on that device
+((cannot open BPF device) /dev/bpf0: Permission denied)
+``` 
+
 Usage
 -----
 You need to include a YAML configuration file named "participants.yml" in the root directory. List the HTTP clients and servers you wish to capture, in the order you wish them to appear. The format is as follows:
@@ -32,6 +42,10 @@ You need to include a YAML configuration file named "participants.yml" in the ro
     - name: <name of second participant>
       port: <port participant listens on>
 ```
+
+By default this tool expects there to be "Starting testClass.testName" and "Finishing testClass.testName" events in the packet stream it captures.  That can be disabled by passing in the `-n` option.
+
+To ignore any service not listed in your participants.yml file pass in the `-f` option
 
 A special participant named "User" can be placed anywhere in the configuration file to indicate where traffic from the browser should appear in the diagram.
 

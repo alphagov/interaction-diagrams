@@ -7,9 +7,10 @@ class PcapToolsHttpMessageRowMapper
   BROWSER_USER_AGENT_PATTERN = /mozilla/i
   BREAK_LINES_PATTERN = /.{0,100}/
 
-  def initialize(participants)
+  def initialize(participants, test_events)
     @participants_by_port = Hash[participants.select { |participant| participant[:port] }.map { |participant| [participant[:port].to_s, participant[:name]] }]
     @participants_by_user_agent = Hash[participants.map { |participant| [(participant[:user_agent] || participant[:name]), participant[:name]] }]
+    @test_events = test_events
   end
 
   def map_from(event)
@@ -26,7 +27,7 @@ class PcapToolsHttpMessageRowMapper
       else
         HttpRequest.new(source_name, destination_name, event[:method], event[:path], body, event[:cookie], content_type)
       end
-    elsif is_test_lifecycle?(event)
+    elsif @test_events && is_test_lifecycle?(event)
       testClass, testName = testDetails(event)
       if is_start?(event)
         StartTest.new(testClass, testName)
