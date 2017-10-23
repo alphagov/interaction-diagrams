@@ -54,6 +54,15 @@ OptionParser.new do |o|
     configuration[:verbose] = true
   end
 
+  configuration[:test_events] = true
+  o.on('-n', 'do not expect "Starting and Finishing" events') do
+    configuration[:test_events] = false
+  end
+
+  o.on('-f', 'only display participants defined in participants.yml') do
+    configuration[:strict_participants] = true
+  end
+
   o.separator ''
   o.separator "#{o.summary_indent}Available Participants"
   o.separator "#{o.summary_indent}----------------------"

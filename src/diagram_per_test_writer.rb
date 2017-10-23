@@ -2,7 +2,7 @@ require 'erb'
 
 class DiagramPerTestWriter
 
-  def initialize(file_manager, display_request_bodies, display_response_bodies, title, participant_order)
+  def initialize(file_manager, display_request_bodies, display_response_bodies, title, participant_order, strict_participants)
     @file_manager = file_manager
     @display_request_bodies = display_request_bodies
     @display_response_bodies = display_response_bodies
@@ -12,6 +12,7 @@ class DiagramPerTestWriter
     @title = title
     @tests = []
     @participant_order = participant_order
+    @strict_participants = strict_participants
   end
 
   def write_index
@@ -19,13 +20,14 @@ class DiagramPerTestWriter
     index_renderer = ERB.new(File.read('src/views/index.html.erb'))
     index = index_renderer.result(binding)
     File.write(@file_manager.index_file, index)
+    FileUtils.symlink(@file_manager.session_name_file, @file_manager.current_file_symlink, force: true)
   end
 
   def visit_StartTest(event)
     @tests << event
     file = @file_manager.new_output_file(event.testName, ".html")
     @interaction_diagram_canvas = HtmlInteractionDiagramCanvas.new(file)
-    @interaction_diagram = InteractionDiagram.new(@participant_order)
+    @interaction_diagram = InteractionDiagram.new(@participant_order, @strict_participants)
   end
 
   def visit_HttpRequest(http_request)
