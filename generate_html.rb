@@ -41,6 +41,10 @@ OptionParser.new do |o|
     configuration[:display_cookies] = false
   end
 
+  o.on('-r <participants file>', "Participants file if not in current directory") do |participants_yml|
+    configuration[:participants] = YAML.load_file(participants_yml).map { |participant| Hash[participant.map { |k,v| [k.to_sym,v] }] }
+  end
+
   participants = configuration[:participants].map { |participant| participant[:name] }
   o.on('-p PARTICIPANT', participants, 'Participant to capture (defaults to all)') do |participant|
     configuration[:participants_to_monitor] << participant
