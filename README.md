@@ -3,6 +3,7 @@ Introduction
 
 The interactions between microservices in applications often evolve to be hard to understand. This tool allows you to generate sequence diagrams of the as-is interactions between microservices. It does this by capturing the traffic between the different microservices when they are all running on a single host.
 
+<img src="./test_service/test_service.png" alt="example output of an interaction diagram using three test microservices" title="Example interaction diagram" width="100%">
 
 Prerequisites
 -------------
@@ -52,3 +53,21 @@ A special participant named "User" can be placed anywhere in the configuration f
 For usage information, run:
 
     ./generate_html.rb --help
+
+Command Line Options
+--------------------
+
+By default this tool expects there to be "Starting testClass.testName" and "Finishing testClass.testName" events in the packet stream it captures.  That can be disabled by passing in the `-n` option.
+
+To ignore any service not listed in your participants.yml file pass in the `-f` option
+
+To use a `participants.yml` file that is not in the current directory pass it in after the `-r` options
+
+Test Service
+------------
+ To demo the tool using a test service:
+  
+  * run `./test_service/capture.sh`
+  * visit http://localhost:8000/index
+  * press enter in the console to complete capture, generate the diagram and open it in a browser
+  

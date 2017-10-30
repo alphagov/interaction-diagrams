@@ -1,0 +1,9 @@
+- name: User
+- name: Frontend
+  user_agent: Frontend Service Client
+  port: 8000
+- name: Logic
+  user_agent: Logic Service Client
+  port: 9000
+- name: Config
+  port: 10000
