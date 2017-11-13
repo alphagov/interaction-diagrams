@@ -23,7 +23,8 @@ class InteractionDiagram
   def write_note(source_name, destination_name, note)
     return if @strict_participants && !strict_participant_check(source_name, destination_name)
     add_participants(source_name, destination_name) if !@strict_participants
-    @lines << "note #{participants_displayed_from_left_to_right(source_name, destination_name) ? SOURCE_ON_LEFT_NOTE_ORIENTATION : SOURCE_ON_RIGHT_NOTE_ORIENTATION} of #{source_name}: #{break_into_lines(note.gsub(/[\r\n]/,'').gsub('#','__HASH__'))}"
+    note_lines = break_into_lines(note.gsub(/[\r\n]/,'').gsub('#','__HASH__'))
+    @lines << "note #{participants_displayed_from_left_to_right(source_name, destination_name) ? SOURCE_ON_LEFT_NOTE_ORIENTATION : SOURCE_ON_RIGHT_NOTE_ORIENTATION} of #{source_name}: #{note_lines}" if !note_lines.to_s.empty?
   end
 
   def to_s
