@@ -1,0 +1,14 @@
+participant User
+participant Frontend
+participant Logic
+participant Config
+User-&gt;Frontend: GET /index
+Frontend-&gt;Logic: POST /logic
+note right of Frontend: application/json\n \n{&quot;chips&quot;:true,&quot;gravy&quot;:true}
+Logic-&gt;Config: GET /config
+Config--&gt;Logic: 200
+note left of Config: application/json\n \n{&quot;colour&quot;:&quot;red&quot;}
+Logic--&gt;Frontend: 200
+note left of Logic: application/json\n \n{&quot;colour&quot;:&quot;red&quot;,&quot;logic_added&quot;:true}
+Frontend--&gt;User: 200
+note left of Frontend: text/html;charset=utf-8\n \n&lt;h1&gt;hello&lt;/h1&gt;&lt;p&gt;config: {&quot;colour&quot;=&gt;&quot;red&quot;, &quot;logic_added&quot;=&gt;true}

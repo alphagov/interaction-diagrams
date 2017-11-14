@@ -8,7 +8,7 @@ require 'yaml'
 require 'application'
 
 configuration = {
-    :participants => YAML.load_file('participants.yml').map { |participant| Hash[participant.map { |k,v| [k.to_sym,v] }] },
+    :participants => {},
     :participants_to_monitor => [],
     :output_directory => './out',
     :display_request_bodies => true,
@@ -40,6 +40,8 @@ OptionParser.new do |o|
   o.on('--hide_cookies', "Don't display cookie information") do
     configuration[:display_cookies] = false
   end
+
+  configuration[:participants] = YAML.load_file('participants.yml').map { |participant| Hash[participant.map { |k,v| [k.to_sym,v] }] } if File.exists? 'particiants.yml'
 
   o.on('-r <participants file>', "Participants file if not in current directory") do |participants_yml|
     configuration[:participants] = YAML.load_file(participants_yml).map { |participant| Hash[participant.map { |k,v| [k.to_sym,v] }] }

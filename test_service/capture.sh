@@ -1,4 +1,4 @@
-#/usr/bin/env sh
+#!/usr/bin/env bash
 set -e
 
 cd "$(dirname "$0")"
@@ -26,4 +26,4 @@ cd ..
 bundle check || bundle install
 ./generate_html.rb -f -n -r ./test_service/test_participants.yml
 
-open out/current.html
+open out/current.html || echo "could not open output"

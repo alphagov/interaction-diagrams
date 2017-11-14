@@ -1,4 +1,4 @@
-Introduction
+Introduction [![Build Status](https://travis-ci.org/alphagov/interaction-diagrams.svg?branch=master)](https://travis-ci.org/alphagov/interaction-diagrams)
 ------------
 
 The interactions between microservices in applications often evolve to be hard to understand. This tool allows you to generate sequence diagrams of the as-is interactions between microservices. It does this by capturing the traffic between the different microservices when they are all running on a single host.
