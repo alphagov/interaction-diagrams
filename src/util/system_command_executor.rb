@@ -1,10 +1,11 @@
 class SystemCommandExecutor
-  def self.invoke_and_kill_on_enter_key_press(command, prompt_text)
+  def self.run_tcpdump_and_wait_for_key_press(loopback_device, tcpdump_output_file_path, ports, prompt_text)
     rd, wr = IO.pipe
-    pid = Kernel.spawn(command, :out => wr)
+    pid = Kernel.spawn("tcpdump",  "-q", "-n", "-s0", "-i", loopback_device, "-w", tcpdump_output_file_path, "udp or (tcp and (port #{ports.join(' or port ')}))", :out => wr)
     puts prompt_text
-    gets
+    STDIN.gets
     Process.kill('TERM', pid)
+    Process.wait(pid)
     wr.close
     rd.read
     end
