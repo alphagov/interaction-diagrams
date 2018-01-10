@@ -4,12 +4,9 @@ sudo: required
 before_install:
   - sudo apt-get update
   - sudo apt-get install -y tshark colordiff
-#  - sudo chown root /usr/bin/dumpcap
-#  - sudo chmod u+s /usr/bin/dumpcap
-#  - sudo setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip' /usr/bin/dumpcap
-  # docs say to run as non-root one needs to change settings and log out/back in -
+  # docs say that to run as non-root one needs to change settings and log out/back in -
   # can't be done on travis so this is a workaround
-  # WARNING - don't do this to enable root to run scripts anywhere that isn't travis!
+  # DANGER - don't do any of the following lines apart from on travisci - it is to enable root to run scripts anywhere
   - sudo sed -i 's/disable_lua = true/disable_lua = false/g' /usr/share/wireshark/init.lua
   - sudo sed -i 's/run_user_scripts_when_superuser = false/run_user_scripts_when_superuser = true/g' /usr/share/wireshark/init.lua
 script:
